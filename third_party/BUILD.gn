@@ -1,0 +1,124 @@
+config("gtest_config") {
+  
+  visibility = [
+    ":*",  # gmock also shares this config.
+  ]
+
+  defines = [
+    "GTEST_API_=",
+
+    # In order to allow regex matches in gtest to be shared between Windows
+    # and other systems, we tell gtest to always use its internal engine.
+    "GTEST_HAS_POSIX_RE=0",
+
+    # Enables C++11 features.
+    "GTEST_LANG_CXX11=1",
+
+    # Prevents gtest from including both <tr1/tuple> and <tuple>.
+    "GTEST_HAS_TR1_TUPLE=0",
+  ]
+
+  # Gtest headers need to be able to find themselves.
+  include_dirs = [
+    "googletest/googletest/include",
+    "googletest/googletest"
+  ]
+
+  # if (gtest_enable_absl_printers) {
+    # configs = [ "//abseil-cpp:absl_include_config" ]
+    # defines += [ "GTEST_HAS_ABSL=1" ]
+  # }
+}
+
+config("gmock_config") {
+  # Gmock headers need to be able to find themselves.
+  include_dirs = [
+    "googletest/googlemock/include",
+    "googletest/googlemock"
+  ]
+
+  # https://github.com/google/googletest/issues/533
+  cflags = [ "-Wno-inconsistent-missing-override" ]
+
+  # if (gtest_enable_absl_printers) {
+    # configs = [ "//abseil-cpp:absl_include_config" ]
+    # defines += [ "GTEST_HAS_ABSL=1" ]
+  # }
+}
+
+static_library("gtest") {
+  sources = [
+    "googletest/googletest/src/gtest_main.cc",
+    "googletest/googletest/src/gtest-all.cc",
+    "googletest/googletest/src/gtest-assertion-result.cc",
+    "googletest/googletest/src/gtest-death-test.cc",
+    "googletest/googletest/src/gtest-filepath.cc",
+    "googletest/googletest/src/gtest-internal-inl.h",
+    "googletest/googletest/src/gtest-matchers.cc",
+    "googletest/googletest/src/gtest-port.cc",
+    "googletest/googletest/src/gtest-printers.cc",
+    "googletest/googletest/src/gtest-test-part.cc",
+    "googletest/googletest/src/gtest-typed-test.cc",
+    "googletest/googletest/src/gtest.cc",
+    "googletest/googletest/include/gtest/internal/custom/gtest-port.h",
+    "googletest/googletest/include/gtest/internal/custom/gtest-printers.h",
+    "googletest/googletest/include/gtest/internal/custom/gtest.h",
+    "googletest/googletest/include/gtest/internal/gtest-death-test-internal.h",
+    "googletest/googletest/include/gtest/internal/gtest-filepath.h",
+    "googletest/googletest/include/gtest/internal/gtest-internal.h",
+    "googletest/googletest/include/gtest/internal/gtest-param-util.h",
+    "googletest/googletest/include/gtest/internal/gtest-port-arch.h",
+    "googletest/googletest/include/gtest/internal/gtest-port.h",
+    "googletest/googletest/include/gtest/internal/gtest-string.h",
+    "googletest/googletest/include/gtest/internal/gtest-type-util.h",
+    "googletest/googletest/include/gtest/gtest_pred_impl.h",
+    "googletest/googletest/include/gtest/gtest_prod.h",
+    "googletest/googletest/include/gtest/gtest-assertion-result.h",
+    "googletest/googletest/include/gtest/gtest-death-test.h",
+    "googletest/googletest/include/gtest/gtest-matchers.h",
+    "googletest/googletest/include/gtest/gtest-message.h",
+    "googletest/googletest/include/gtest/gtest-param-test.h",
+    "googletest/googletest/include/gtest/gtest-printers.h",
+    "googletest/googletest/include/gtest/gtest-spi.h",
+    "googletest/googletest/include/gtest/gtest-test-part.h",
+    "googletest/googletest/include/gtest/gtest-typed-test.h",
+    "googletest/googletest/include/gtest/gtest.h"
+  ]
+
+  public_configs = [ ":gtest_config" ]
+
+  defines = []
+  deps = []
+  public_deps = []
+}
+
+static_library("gmock") {
+  sources = [
+    "googletest/googlemock/include/gmock/internal/custom/gmock-generated-actions.h",
+    "googletest/googlemock/include/gmock/internal/custom/gmock-matchers.h",
+    "googletest/googlemock/include/gmock/internal/custom/gmock-port.h",
+    "googletest/googlemock/include/gmock/internal/gmock-internal-utils.h",
+    "googletest/googlemock/include/gmock/internal/gmock-port.h",
+    "googletest/googlemock/include/gmock/internal/gmock-pp.h",
+    "googletest/googlemock/include/gmock/gmock-actions.h",
+    "googletest/googlemock/include/gmock/gmock-cardinalities.h",
+    "googletest/googlemock/include/gmock/gmock-function-mocker.h",
+    "googletest/googlemock/include/gmock/gmock-matchers.h",
+    "googletest/googlemock/include/gmock/gmock-more-actions.h",
+    "googletest/googlemock/include/gmock/gmock-more-matchers.h",
+    "googletest/googlemock/include/gmock/gmock-nice-strict.h",
+    "googletest/googlemock/include/gmock/gmock-spec-builders.h",
+    "googletest/googlemock/include/gmock/gmock.h",
+    "googletest/googlemock/src/gmock_main.cc",
+    "googletest/googlemock/src/gmock-all.cc",
+    "googletest/googlemock/src/gmock-cardinalities.cc",
+    "googletest/googlemock/src/gmock-internal-utils.cc",
+    "googletest/googlemock/src/gmock-matchers.cc",
+    "googletest/googlemock/src/gmock-spec-builders.cc",
+    "googletest/googlemock/src/gmock.cc",
+  ]
+
+  public_deps = [ ":gtest" ]
+
+  public_configs = [ ":gmock_config" ]
+}

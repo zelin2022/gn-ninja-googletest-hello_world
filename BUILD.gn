@@ -1,0 +1,23 @@
+executable("main") {
+  sources = [ "client_main.cc" ]
+  deps = [
+    "src/hello_world"
+  ]
+}
+
+executable("unit_test") {
+  sources = [ "unit_test_main.cc" ]
+  deps = [
+    "third_party:gtest",
+    "third_party:gmock"
+  ]
+
+  sources += [
+    "src/hello_world/hello_world_unittest.cc"
+  ]
+  deps += [
+    "src/hello_world"
+  ]
+}
+
+
